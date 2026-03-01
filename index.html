@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIT YOU UP ACADEMY — Learning Check</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+  --bg:#0d0d0d; --surface:#161616; --card:#1c1c1c; --border:#2e2e2e;
+  --accent:#f5e642; --red:#ff4d4d; --green:#3ddc84; --orange:#ff9500;
+  --text:#f0f0f0; --muted:#666;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;}
+
+/* ── HEADER ── */
+.site-header{background:var(--accent);padding:0 40px;display:flex;align-items:stretch;justify-content:space-between;border-bottom:4px solid #000;}
+.logo-block{display:flex;flex-direction:column;justify-content:center;padding:20px 0;}
+.logo-main{font-family:'Bebas Neue',sans-serif;font-size:54px;letter-spacing:5px;color:#000;line-height:1;}
+.logo-sub{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:6px;color:#000;opacity:.55;margin-top:5px;}
+.header-right{align-self:center;display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.header-badge{background:#000;color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:3px;padding:9px 22px;}
+
+/* ── SECTION ── */
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px;}
+
+/* ── TOOLBAR ── */
+.toolbar{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--green);padding:14px 22px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;}
+.toolbar-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--green);white-space:nowrap;}
+#recSelect{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;padding:8px 12px;outline:none;min-width:180px;max-width:300px;flex:1;cursor:pointer;}
+#recSelect:focus{border-color:var(--accent);}
+.toolbar-sep{width:1px;height:24px;background:var(--border);margin:0 4px;}
+.save-msg{font-family:'Space Mono',monospace;font-size:11px;color:var(--green);opacity:0;transition:opacity .4s, color .3s;white-space:nowrap;margin-left:4px;}
+
+/* ── INFO BLOCK ── */
+.info-block{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);padding:26px 30px;}
+.block-title{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--accent);margin-bottom:18px;text-transform:uppercase;}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px 30px;}
+.ifield{display:flex;flex-direction:column;gap:5px;}
+.ifield label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+.ifield input{background:transparent;border:none;border-bottom:1px solid var(--border);padding:6px 0;font-family:'Noto Sans KR',sans-serif;font-size:15px;color:var(--text);outline:none;width:100%;transition:border-color .2s;}
+.ifield input:focus{border-bottom-color:var(--accent);}
+.span2{grid-column:span 2;}
+
+/* ── ADD ZONE ── */
+.add-zone{margin-top:22px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.add-zone .zone-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);white-space:nowrap;}
+.add-zone input{background:var(--surface);border:1px solid var(--border);padding:10px 14px;font-family:'Noto Sans KR',sans-serif;font-size:14px;color:var(--text);outline:none;width:170px;transition:border-color .2s;}
+.add-zone input:focus{border-color:var(--accent);}
+
+/* ── BUTTONS ── */
+.btn{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.8px;padding:9px 16px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn:hover{border-color:var(--accent);color:var(--accent);}
+.btn-y{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
+.btn-y:hover{background:#dfd020;border-color:#dfd020;color:#000;}
+.btn-g{border-color:var(--green);color:var(--green);}
+.btn-g:hover{background:var(--green);color:#000;}
+.btn-r{border-color:var(--red);color:var(--red);}
+.btn-r:hover{background:var(--red);color:#fff;}
+.btn-o{border-color:var(--orange);color:var(--orange);}
+.btn-o:hover{background:var(--orange);color:#000;}
+.btn-d{border-color:#3a3a3a;color:#666;}
+.btn-d:hover{border-color:var(--text);color:var(--text);}
+.btn-b{border-color:#4a90d9;color:#4a90d9;}
+.btn-b:hover{background:#4a90d9;color:#fff;}
+.btn-gmail{border-color:#ea4335;color:#ea4335;}
+.btn-gmail:hover{background:#ea4335;color:#fff;}
+
+/* ── STUDENT GRID ── */
+.student-grid{margin-top:22px;display:flex;flex-direction:column;gap:14px;}
+.empty-note{text-align:center;padding:56px 20px;color:var(--muted);font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;border:1px dashed var(--border);}
+
+/* ── CARD (좌우 분할) ── */
+.s-card{background:var(--card);border:1px solid var(--border);overflow:hidden;animation:up .28s ease both;}
+@keyframes up{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.c-head{display:flex;align-items:center;padding:12px 18px 10px;background:var(--surface);border-bottom:1px solid var(--border);}
+.c-num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);opacity:.4;line-height:1;margin-right:12px;}
+.c-name{font-size:17px;font-weight:700;flex:1;}
+.c-del{background:transparent;border:1px solid #3a3a3a;color:var(--muted);width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .15s;padding:0;}
+.c-del:hover{border-color:var(--red);color:var(--red);}
+
+/* 좌우 분할 레이아웃 */
+.c-columns{display:grid;grid-template-columns:1fr 1fr;min-height:220px;}
+.c-left{padding:16px 18px;display:flex;flex-direction:column;gap:12px;border-right:1px solid var(--border);}
+.c-right{padding:16px 18px;display:flex;flex-direction:column;gap:10px;background:rgba(245,230,66,0.02);}
+
+.c-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.c-label{font-size:12px;color:#aaa;flex:1;}
+
+/* attendance */
+.att-g{display:flex;gap:3px;}
+.att-g input[type=radio]{display:none;}
+.att-g label{font-family:'Space Mono',monospace;font-size:11px;padding:5px 9px;border:1px solid var(--border);cursor:pointer;color:var(--muted);transition:all .15s;}
+.att-g label:hover{border-color:var(--text);color:var(--text);}
+.att-g input[value="O"]:checked+label{background:var(--green);border-color:var(--green);color:#000;font-weight:700;}
+.att-g input[value="X"]:checked+label{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;}
+.att-g input[value="L"]:checked+label{background:var(--orange);border-color:var(--orange);color:#000;font-weight:700;}
+
+/* toggle */
+.tog{display:flex;}
+.tog input[type=checkbox]{display:none;}
+.tog label{position:relative;width:44px;height:24px;background:var(--border);cursor:pointer;border-radius:12px;display:block;transition:background .2s;}
+.tog label::after{content:'';position:absolute;width:18px;height:18px;background:var(--muted);border-radius:50%;top:3px;left:3px;transition:all .2s;}
+.tog input:checked+label{background:var(--green);}
+.tog input:checked+label::after{left:23px;background:#fff;}
+
+/* stars */
+.stars{display:flex;gap:2px;}
+.stars input[type=radio]{display:none;}
+.stars label{font-size:21px;cursor:pointer;color:#2e2e2e;line-height:1;transition:color .1s;}
+.stars label:hover{color:var(--accent);}
+/* fill stars up to selected */
+.stars.r1 label:nth-child(2){color:var(--accent);}
+.stars.r2 label:nth-child(2),.stars.r2 label:nth-child(4){color:var(--accent);}
+.stars.r3 label:nth-child(2),.stars.r3 label:nth-child(4),.stars.r3 label:nth-child(6){color:var(--accent);}
+.stars.r4 label:nth-child(2),.stars.r4 label:nth-child(4),.stars.r4 label:nth-child(6),.stars.r4 label:nth-child(8){color:var(--accent);}
+.stars.r5 label:nth-child(n+2){color:var(--accent);}
+
+/* memo */
+.memo-row{display:flex;flex-direction:column;gap:5px;}
+.memo-row label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);}
+.memo-row textarea{background:var(--bg);border:1px solid var(--border);padding:8px 10px;font-family:'Noto Sans KR',sans-serif;font-size:12px;color:var(--text);outline:none;resize:none;height:46px;width:100%;line-height:1.5;transition:border-color .2s;}
+.memo-row textarea:focus{border-color:var(--accent);}
+
+/* parent right column */
+.p-col-title{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);display:flex;align-items:center;gap:6px;margin-bottom:2px;}
+.p-col-title span{font-size:14px;}
+.p-col-textarea{background:var(--bg);border:1px solid #f5e64235;padding:10px 12px;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--text);outline:none;resize:none;flex:1;width:100%;line-height:1.8;transition:border-color .2s;min-height:120px;}
+.p-col-textarea:focus{border-color:var(--accent);}
+.p-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.btn-ptag{background:transparent;border:1px solid #3a3a3a;color:#888;font-family:'Noto Sans KR',sans-serif;font-size:11px;padding:4px 8px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-ptag:hover{border-color:var(--accent);color:var(--accent);}
+.btn-pgmail{background:transparent;border:1px solid #ea4335;color:#ea4335;font-family:'Space Mono',monospace;font-size:10px;padding:6px 12px;cursor:pointer;transition:all .15s;width:100%;margin-top:auto;}
+.btn-pgmail:hover{background:#ea4335;color:#fff;}
+
+/* ── EXPORT MODAL BUTTONS ── */
+.exp-btn{display:block;width:100%;padding:13px 16px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;cursor:pointer;text-align:left;transition:all .15s;}
+.exp-btn:hover{border-color:var(--accent);color:var(--accent);}
+.mail-stu-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);margin-bottom:7px;}
+.mail-stu-name{font-weight:700;font-size:14px;}
+.exp-btn-sm{font-family:'Space Mono',monospace;font-size:11px;padding:5px 11px;border:1px solid var(--border);background:transparent;cursor:pointer;transition:all .15s;}
+.exp-jpg{border-color:#ff9500;color:#ff9500;}.exp-jpg:hover{background:#ff9500;color:#000;}
+.exp-pdf{border-color:#ea4335;color:#ea4335;}.exp-pdf:hover{background:#ea4335;color:#fff;}
+.exp-txt{border-color:#4a90d9;color:#4a90d9;}.exp-txt:hover{background:#4a90d9;color:#fff;}
+.exp-dim{opacity:.35;}
+.summary-block{margin-top:26px;background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);padding:22px 30px;}
+.sum-stats{display:flex;gap:36px;flex-wrap:wrap;}
+.stat .num{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--accent);line-height:1;}
+.stat .lbl{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1.5px;margin-top:2px;}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:999;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);padding:30px;width:440px;max-width:92vw;animation:up .2s ease;}
+.modal h3{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+.modal p{font-size:13px;color:#888;margin-bottom:16px;line-height:1.7;}
+.rec-list{max-height:300px;overflow-y:auto;margin-bottom:14px;}
+.rec-list::-webkit-scrollbar{width:3px;}
+.rec-list::-webkit-scrollbar-thumb{background:var(--border);}
+.rec-item{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border:1px solid var(--border);margin-bottom:7px;cursor:pointer;transition:all .15s;}
+.rec-item:hover{border-color:var(--accent);}
+.rec-item .ri-name{font-weight:700;font-size:14px;}
+.rec-item .ri-meta{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;}
+.rec-del{background:transparent;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:2px 6px;line-height:1;}
+.rec-del:hover{color:var(--red);}
+.modal-foot{display:flex;justify-content:flex-end;gap:8px;}
+
+/* ── PRINT ── */
+@media print{
+  body{background:#fff!important;color:#000!important;}
+  .site-header{background:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .logo-main{color:var(--accent)!important;}
+  .toolbar,.add-zone,.modal-bg{display:none!important;}
+  .info-block,.summary-block{background:#f8f8f8!important;border-left:4px solid #c8bb00!important;}
+  .block-title{color:#666!important;}
+  .ifield input{color:#000!important;border-bottom-color:#ccc!important;}
+  .student-grid{grid-template-columns:repeat(2,1fr)!important;}
+  .s-card{border:1px solid #ddd!important;break-inside:avoid;background:#fff!important;}
+  .c-head{background:#f0f0f0!important;}
+  .c-name,.c-label{color:#000!important;}
+  .c-del{display:none!important;}
+  .tog label{background:#ccc!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .tog input:checked+label{background:#3ddc84!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .att-g input[value="O"]:checked+label{background:#3ddc84!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .att-g input[value="X"]:checked+label{background:#ff4d4d!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .att-g input[value="L"]:checked+label{background:#ff9500!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .memo-row textarea{background:#f9f9f9!important;color:#000!important;border-color:#ddd!important;}
+  .stat .num{color:#a09000!important;}
+}
+
+@media(max-width:600px){
+  .site-header{padding:0 18px;}
+  .logo-main{font-size:38px;}
+  .wrap{padding:0 14px;}
+  .info-grid{grid-template-columns:1fr 1fr;}
+  .span2{grid-column:span 1;}
+  .c-columns{grid-template-columns:1fr;}
+  .c-left{border-right:none;border-bottom:1px solid var(--border);}
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="site-header">
+  <div class="logo-block">
+    <div class="logo-main">LIT YOU UP</div>
+    <div class="logo-sub">ACADEMY · LEARNING CHECK</div>
+  </div>
+  <div class="header-right">
+    <div class="header-badge">STUDENT TRACKER</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ── TOOLBAR ── -->
+  <div class="toolbar">
+    <span class="toolbar-label">💾 RECORDS</span>
+    <select id="recSelect" onchange="loadFromSelect()">
+      <option value="">— 저장된 수업 기록 선택 —</option>
+    </select>
+    <button class="btn btn-g" onclick="saveRecord()">저장</button>
+    <button class="btn btn-d" onclick="openModal()">목록 관리</button>
+    <span class="toolbar-sep"></span>
+    <span class="toolbar-label" style="color:var(--accent)">📥 EXPORT</span>
+    <button class="btn btn-y" onclick="openExportModal('save')">문서 저장 ▾</button>
+    <button class="btn btn-gmail" onclick="openExportModal('mail')">✉ Gmail 발송 ▾</button>
+    <span class="save-msg" id="saveMsg"></span>
+  </div>
+
+  <!-- ── EXPORT MODAL ── -->
+  <div class="modal-bg" id="exportModal" onclick="if(event.target===this)closeExportModal()">
+    <div class="modal" style="width:360px;">
+      <h3 id="exportTitle">문서 저장</h3>
+      <p id="exportDesc" style="margin-bottom:20px;"></p>
+      <div style="display:flex;flex-direction:column;gap:10px;" id="exportBtns"></div>
+      <div class="modal-foot" style="margin-top:18px;">
+        <button class="btn btn-d" onclick="closeExportModal()">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ① CLASS INFO ── -->
+  <div class="info-block">
+    <div class="block-title">① CLASS INFO</div>
+    <div class="info-grid">
+      <div class="ifield">
+        <label>날짜 DATE</label>
+        <input type="date" id="f-date">
+      </div>
+      <div class="ifield">
+        <label>강사명 TEACHER</label>
+        <input type="text" id="f-teacher" placeholder="선생님 이름">
+      </div>
+      <div class="ifield">
+        <label>과목 SUBJECT</label>
+        <input type="text" id="f-subject" placeholder="예: 국어, 영어, 수학…">
+      </div>
+      <div class="ifield span2">
+        <label>수업 내용 CLASS CONTENT</label>
+        <input type="text" id="f-content" placeholder="예: 현대소설 — 소나기 / 비문학 독해 전략">
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ② STUDENTS ── -->
+  <div class="add-zone">
+    <span class="zone-label">② STUDENTS</span>
+    <input type="text" id="newName" placeholder="학생 이름 입력"
+      onkeydown="if(event.key==='Enter') addStudent()">
+    <button class="btn btn-y" onclick="addStudent()">+ 추가</button>
+    <button class="btn btn-r" onclick="clearAll()">✕ 전체 삭제</button>
+  </div>
+
+  <!-- ── CARDS ── -->
+  <div class="student-grid" id="sGrid">
+    <div class="empty-note" id="emptyNote">— 학생을 추가하면 카드가 생성됩니다 —</div>
+  </div>
+
+  <!-- ── ③ SUMMARY ── -->
+  <div class="summary-block">
+    <div class="block-title">③ SUMMARY</div>
+    <div class="sum-stats">
+      <div class="stat"><div class="num" id="sTotal">0</div><div class="lbl">TOTAL</div></div>
+      <div class="stat"><div class="num" id="sPresent">0</div><div class="lbl">출석</div></div>
+      <div class="stat"><div class="num" id="sAbsent">0</div><div class="lbl">결석</div></div>
+      <div class="stat"><div class="num" id="sLate">0</div><div class="lbl">지각</div></div>
+      <div class="stat"><div class="num" id="sHW">0</div><div class="lbl">숙제완료</div></div>
+      <div class="stat"><div class="num" id="sPre">0</div><div class="lbl">예습완료</div></div>
+      <div class="stat"><div class="num" id="sRev">0</div><div class="lbl">복습완료</div></div>
+      <div class="stat"><div class="num" id="sAtt">-</div><div class="lbl">평균태도</div></div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- ── EXPORT MODAL ── -->
+  <div class="modal-bg" id="exportModal" onclick="if(event.target===this)closeExportModal()">
+    <div class="modal" style="width:360px;">
+      <h3 id="exportTitle">문서 저장</h3>
+      <p id="exportDesc" style="margin-bottom:20px;font-size:13px;color:#888;line-height:1.6;"></p>
+      <div style="display:flex;flex-direction:column;gap:8px;" id="exportBtns"></div>
+      <div class="modal-foot" style="margin-top:18px;">
+        <button class="btn btn-d" onclick="closeExportModal()">닫기</button>
+      </div>
+    </div>
+  </div>
+
+<!-- ── RECORDS MODAL ── -->
+<div class="modal-bg" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h3>📂 수업 기록 관리</h3>
+    <p>저장된 수업 기록을 불러오거나 삭제할 수 있습니다.<br>불러오기 전 현재 내용을 먼저 저장해 주세요.</p>
+    <div class="rec-list" id="recList"></div>
+    <div class="modal-foot">
+      <button class="btn btn-d" onclick="closeModal()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ──────────────────────────────
+   STATE
+────────────────────────────── */
+let students = [];
+let uid = 0;
+const SK = 'lyu_records';
+
+// init date
+document.getElementById('f-date').valueAsDate = new Date();
+initCloud();
+
+/* ──────────────────────────────
+   ☁ CLOUD STORAGE (window.storage)
+   PC / 폰 / 어느 브라우저에서든 동일한 데이터
+────────────────────────────── */
+async function initCloud() {
+  setStatus('loading', '☁ 기록 불러오는 중…');
+  try {
+    const result = await window.storage.get(SK);
+    const recs = result ? JSON.parse(result.value) : {};
+    renderSelect(recs);
+    setStatus('ok', '☁ 클라우드 연결됨');
+  } catch(e) {
+    renderSelect({});
+    setStatus('ok', '☁ 새 기록 시작');
+  }
+}
+
+async function getRecs() {
+  try {
+    const r = await window.storage.get(SK);
+    return r ? JSON.parse(r.value) : {};
+  } catch { return {}; }
+}
+
+async function setRecs(recs) {
+  await window.storage.set(SK, JSON.stringify(recs));
+}
+
+function setStatus(state, msg) {
+  const el = document.getElementById('saveMsg');
+  el.textContent = msg;
+  el.style.opacity = '1';
+  el.style.color = state === 'saving' ? '#f5e642'
+                 : state === 'loading' ? '#ff9500'
+                 : '#3ddc84';
+  if (state === 'ok') setTimeout(() => { el.style.opacity = '0'; }, 3000);
+}
+
+/* ──────────────────────────────
+   ADD / REMOVE STUDENT
+────────────────────────────── */
+function addStudent(presetName, presetData) {
+  const inp = document.getElementById('newName');
+  const name = presetName || inp.value.trim();
+  if (!name) return;
+
+  const id = ++uid;
+  students.push({ id, name });
+  document.getElementById('emptyNote')?.remove();
+  if (!presetName) inp.value = '';
+
+  const num = students.length;
+  const card = document.createElement('div');
+  card.className = 's-card';
+  card.id = 'card-' + id;
+  card.style.animationDelay = ((num - 1) * 0.045) + 's';
+
+  card.innerHTML = `
+    <div class="c-head">
+      <span class="c-num">${String(num).padStart(2,'0')}</span>
+      <span class="c-name">${x(name)}</span>
+      <button class="c-del" onclick="removeStu(${id})">✕</button>
+    </div>
+    <div class="c-columns">
+      <!-- 왼쪽: 체크 항목 -->
+      <div class="c-left">
+        <div class="c-row">
+          <span class="c-label">출석 ATTENDANCE</span>
+          <div class="att-g">
+            <input type="radio" name="att${id}" id="aO${id}" value="O" checked onchange="sync()">
+            <label for="aO${id}">출석</label>
+            <input type="radio" name="att${id}" id="aX${id}" value="X" onchange="sync()">
+            <label for="aX${id}">결석</label>
+            <input type="radio" name="att${id}" id="aL${id}" value="L" onchange="sync()">
+            <label for="aL${id}">지각</label>
+          </div>
+        </div>
+        <div class="c-row">
+          <span class="c-label">숙제 완료 HOMEWORK</span>
+          <div class="tog"><input type="checkbox" id="hw${id}" onchange="sync()"><label for="hw${id}"></label></div>
+        </div>
+        <div class="c-row">
+          <span class="c-label">예습 PREVIEW</span>
+          <div class="tog"><input type="checkbox" id="pre${id}" onchange="sync()"><label for="pre${id}"></label></div>
+        </div>
+        <div class="c-row">
+          <span class="c-label">복습 REVIEW</span>
+          <div class="tog"><input type="checkbox" id="rev${id}" onchange="sync()"><label for="rev${id}"></label></div>
+        </div>
+        <div class="c-row">
+          <span class="c-label">수업 태도 ATTITUDE</span>
+          <div class="stars" id="st${id}">
+            ${[1,2,3,4,5].map(n=>`
+              <input type="radio" name="st${id}" id="s${n}x${id}" value="${n}" onchange="refreshStars(${id});sync()">
+              <label for="s${n}x${id}">★</label>`).join('')}
+          </div>
+        </div>
+        <div class="memo-row">
+          <label>MEMO · 특이사항</label>
+          <textarea id="mem${id}" placeholder="특이사항, 피드백…"></textarea>
+        </div>
+      </div>
+      <!-- 오른쪽: 학부모 전달 사항 -->
+      <div class="c-right">
+        <div class="p-col-title"><span>👨‍👩‍👧</span> 학부모 전달 사항</div>
+        <textarea class="p-col-textarea" id="pnote${id}" placeholder="학부모님께 전달할 내용을 자유롭게 적어주세요.
+
+예) 오늘 받아쓰기를 매우 잘했습니다. 다음 수업까지 교재 32-35p 예습 부탁드립니다. 집중력이 많이 향상됐습니다."></textarea>
+        <div class="p-tags">
+          <button class="btn-ptag" onclick="addTag(${id},'잘했어요 👍')">잘했어요 👍</button>
+          <button class="btn-ptag" onclick="addTag(${id},'집중력 향상 📈')">집중력 향상 📈</button>
+          <button class="btn-ptag" onclick="addTag(${id},'예습 필요 📚')">예습 필요 📚</button>
+          <button class="btn-ptag" onclick="addTag(${id},'복습 필요 🔁')">복습 필요 🔁</button>
+          <button class="btn-ptag" onclick="addTag(${id},'상담 요청 📞')">상담 요청 📞</button>
+        </div>
+        <button class="btn-pgmail" onclick="mailStudentText(${id},'${x(name)}')">✉ 학부모 Gmail 발송</button>
+      </div>
+    </div>`;
+
+  document.getElementById('sGrid').appendChild(card);
+
+  // restore saved data
+  if (presetData) {
+    const atEl = document.getElementById('a' + (presetData.att||'O') + id);
+    if (atEl) atEl.checked = true;
+    ['hw','pre','rev'].forEach(k => {
+      if (presetData[k]) document.getElementById(k+id).checked = true;
+    });
+    if (presetData.star) {
+      const sel = document.getElementById('s'+presetData.star+'x'+id);
+      if (sel) { sel.checked = true; refreshStars(id); }
+    }
+    if (presetData.memo) document.getElementById('mem'+id).value = presetData.memo;
+    if (presetData.pnote) document.getElementById('pnote'+id).value = presetData.pnote;
+  }
+  sync();
+}
+
+function removeStu(id) {
+  students = students.filter(s => s.id !== id);
+  document.getElementById('card-'+id)?.remove();
+  if (!students.length) showEmpty();
+  sync();
+}
+
+function clearAll() {
+  if (!confirm('모든 학생 카드를 삭제할까요?')) return;
+  students = []; uid = 0;
+  document.getElementById('sGrid').innerHTML = '';
+  showEmpty(); sync();
+}
+
+function showEmpty() {
+  const e = document.createElement('div');
+  e.className = 'empty-note'; e.id = 'emptyNote';
+  e.textContent = '— 학생을 추가하면 카드가 생성됩니다 —';
+  document.getElementById('sGrid').appendChild(e);
+}
+
+function refreshStars(id) {
+  const g = document.getElementById('st'+id);
+  if (!g) return;
+  g.className = 'stars';
+  for (let i=1;i<=5;i++) {
+    if (document.getElementById('s'+i+'x'+id)?.checked) {
+      g.classList.add('r'+i); break;
+    }
+  }
+}
+
+/* ──────────────────────────────
+   SYNC SUMMARY
+────────────────────────────── */
+function sync() {
+  let total=students.length, present=0, absent=0, late=0, hw=0, pre=0, rev=0, as=0, ac=0;
+  students.forEach(({id}) => {
+    const av = document.querySelector(`input[name="att${id}"]:checked`)?.value;
+    if(av==='O') present++; else if(av==='X') absent++; else if(av==='L') late++;
+    if(document.getElementById('hw'+id)?.checked) hw++;
+    if(document.getElementById('pre'+id)?.checked) pre++;
+    if(document.getElementById('rev'+id)?.checked) rev++;
+    for(let i=1;i<=5;i++) if(document.getElementById('s'+i+'x'+id)?.checked){as+=i;ac++;}
+  });
+  set('sTotal',total); set('sPresent',present); set('sAbsent',absent); set('sLate',late);
+  set('sHW',hw); set('sPre',pre); set('sRev',rev);
+  set('sAtt', ac ? (as/ac).toFixed(1) : '-');
+}
+function set(id,v){document.getElementById(id).textContent=v;}
+
+/* ──────────────────────────────
+   COLLECT / APPLY DATA
+────────────────────────────── */
+function collectData() {
+  return {
+    date: document.getElementById('f-date').value,
+    teacher: document.getElementById('f-teacher').value,
+    subject: document.getElementById('f-subject').value,
+    content: document.getElementById('f-content').value,
+    students: students.map(({id,name}) => ({
+      name,
+      att: document.querySelector(`input[name="att${id}"]:checked`)?.value || 'O',
+      hw: !!document.getElementById('hw'+id)?.checked,
+      pre: !!document.getElementById('pre'+id)?.checked,
+      rev: !!document.getElementById('rev'+id)?.checked,
+      star: (()=>{ for(let i=1;i<=5;i++) if(document.getElementById('s'+i+'x'+id)?.checked) return i; return 0; })(),
+      memo: document.getElementById('mem'+id)?.value || '',
+      pnote: document.getElementById('pnote'+id)?.value || ''
+    }))
+  };
+}
+
+function applyData(d) {
+  document.getElementById('f-date').value = d.date || '';
+  document.getElementById('f-teacher').value = d.teacher || '';
+  document.getElementById('f-subject').value = d.subject || '';
+  document.getElementById('f-content').value = d.content || '';
+  students = []; uid = 0;
+  document.getElementById('sGrid').innerHTML = '';
+  showEmpty();
+  (d.students||[]).forEach(s => addStudent(s.name, s));
+  sync();
+}
+
+/* ──────────────────────────────
+   SAVE / LOAD (☁ Cloud)
+────────────────────────────── */
+async function saveRecord() {
+  setStatus('saving', '☁ 저장 중…');
+  const d = collectData();
+  const recs = await getRecs();
+  const key = Date.now().toString();
+  const label = [d.date||'날짜없음', d.subject||'과목없음', d.teacher||'강사없음'].join(' · ');
+  recs[key] = { label, ts: Date.now(), data: d };
+  await setRecs(recs);
+  renderSelect(recs);
+  document.getElementById('recSelect').value = key;
+  setStatus('ok', '✓ 클라우드에 저장됨');
+}
+
+function renderSelect(recs) {
+  const sel = document.getElementById('recSelect');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— 저장된 수업 기록 선택 —</option>';
+  Object.keys(recs).sort((a,b)=>b-a).forEach(k => {
+    const o = document.createElement('option');
+    o.value = k; o.textContent = recs[k].label;
+    sel.appendChild(o);
+  });
+  if (cur) sel.value = cur;
+}
+
+// kept for compatibility
+function refreshSelect() { getRecs().then(renderSelect); }
+
+async function loadFromSelect() {
+  const key = document.getElementById('recSelect').value;
+  if (!key) return;
+  setStatus('loading', '☁ 불러오는 중…');
+  const recs = await getRecs();
+  if (recs[key]) { applyData(recs[key].data); setStatus('ok', '✓ 불러옴'); }
+}
+
+/* ──────────────────────────────
+   MODAL
+────────────────────────────── */
+async function openModal() {
+  const recs = await getRecs();
+  const keys = Object.keys(recs).sort((a,b)=>b-a);
+  const list = document.getElementById('recList');
+  if (!keys.length) {
+    list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:24px;font-size:13px;">저장된 기록이 없습니다</p>';
+  } else {
+    list.innerHTML = '';
+    keys.forEach(k => {
+      const r = recs[k];
+      const item = document.createElement('div');
+      item.className = 'rec-item';
+      item.innerHTML = `
+        <div>
+          <div class="ri-name">${x(r.label)}</div>
+          <div class="ri-meta">학생 ${(r.data.students||[]).length}명 · ${new Date(r.ts).toLocaleString('ko-KR')}</div>
+        </div>
+        <button class="rec-del" onclick="deleteRec('${k}',event)">✕</button>`;
+      item.onclick = e => {
+        if (e.target.classList.contains('rec-del')) return;
+        applyData(r.data);
+        document.getElementById('recSelect').value = k;
+        closeModal();
+      };
+      list.appendChild(item);
+    });
+  }
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+async function deleteRec(key, e) {
+  e.stopPropagation();
+  if (!confirm('이 기록을 삭제할까요?')) return;
+  const recs = await getRecs();
+  delete recs[key];
+  await setRecs(recs);
+  renderSelect(recs);
+  openModal();
+}
+
+/* ──────────────────────────────
+   EXCEL EXPORT
+────────────────────────────── */
+function exportExcel() {
+  const d = collectData();
+  if (!d.students.length) { alert('학생 데이터가 없습니다.'); return; }
+
+  const attMap = { O:'출석', X:'결석', L:'지각' };
+
+  // Sheet 1: 체크표
+  const rows = [
+    ['LIT YOU UP ACADEMY — Learning Check'],
+    [],
+    ['날짜', d.date, '', '강사', d.teacher],
+    ['과목', d.subject, '', '수업내용', d.content],
+    [],
+    ['번호','이름','출석','숙제완료','예습','복습','태도(1-5)','특이사항'],
+    ...d.students.map((s,i)=>[
+      i+1, s.name,
+      attMap[s.att]||s.att,
+      s.hw?'✓':'',
+      s.pre?'✓':'',
+      s.rev?'✓':'',
+      s.star||'',
+      s.memo
+    ])
+  ];
+
+  // Summary row
+  const total = d.students.length;
+  const present = d.students.filter(s=>s.att==='O').length;
+  const absent  = d.students.filter(s=>s.att==='X').length;
+  const late    = d.students.filter(s=>s.att==='L').length;
+  const hw      = d.students.filter(s=>s.hw).length;
+  const pre     = d.students.filter(s=>s.pre).length;
+  const rev     = d.students.filter(s=>s.rev).length;
+  const stars   = d.students.filter(s=>s.star>0);
+  const avgAtt  = stars.length ? (stars.reduce((a,s)=>a+s.star,0)/stars.length).toFixed(1) : '-';
+
+  rows.push([]);
+  rows.push(['[요약]','전체:'+total,'출석:'+present,'결석:'+absent,'지각:'+late,'숙제완료:'+hw,'예습:'+pre,'복습:'+rev,'평균태도:'+avgAtt]);
+
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{wch:6},{wch:14},{wch:8},{wch:10},{wch:8},{wch:8},{wch:10},{wch:32}];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '학습체크표');
+
+  const fname = `LYU_${d.date||'nodate'}_${d.subject||'check'}.xlsx`;
+  XLSX.writeFile(wb, fname);
+}
+
+/* ──────────────────────────────
+   WORD EXPORT (순수 XML, 외부 라이브러리 불필요)
+────────────────────────────── */
+function exportWord() {
+  const d = collectData();
+  if (!d.students.length) { alert('학생 데이터가 없습니다.'); return; }
+  setStatus('saving', '📝 Word 생성 중…');
+
+  const attMap = { O:'출석', X:'결석', L:'지각' };
+  const yn = v => v ? '✓' : '-';
+  const starStr = n => n ? '★'.repeat(n)+'☆'.repeat(5-n) : '-';
+
+  const total   = d.students.length;
+  const present = d.students.filter(s=>s.att==='O').length;
+  const absent  = d.students.filter(s=>s.att==='X').length;
+  const late    = d.students.filter(s=>s.att==='L').length;
+  const hw      = d.students.filter(s=>s.hw).length;
+  const pre     = d.students.filter(s=>s.pre).length;
+  const rev     = d.students.filter(s=>s.rev).length;
+  const starred = d.students.filter(s=>s.star>0);
+  const avgAtt  = starred.length ? (starred.reduce((a,s)=>a+s.star,0)/starred.length).toFixed(1) : '-';
+
+  // XML 특수문자 이스케이프
+  const xe = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  // 셀 생성 헬퍼
+  const cell = (txt, bold=false, bg='FFFFFF', color='000000') => `
+    <w:tc>
+      <w:tcPr><w:shd w:fill="${bg}" w:color="auto" w:val="clear"/>
+        <w:tcMar><w:top w:w="60" w:type="dxa"/><w:bottom w:w="60" w:type="dxa"/>
+        <w:left w:w="100" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tcMar>
+      </w:tcPr>
+      <w:p><w:r><w:rPr>${bold?'<w:b/>':''}<w:color w:val="${color}"/>
+        <w:sz w:val="18"/><w:szCs w:val="18"/>
+      </w:rPr><w:t xml:space="preserve">${xe(txt)}</w:t></w:r></w:p>
+    </w:tc>`;
+
+  // 헤더 행
+  const headerRow = `<w:tr>
+    ${['번호','이름','출석','숙제','예습','복습','태도','특이사항','학부모전달'].map(h => cell(h,true,'1A1A1A','FFFFFF')).join('')}
+  </w:tr>`;
+
+  // 학생 데이터 행
+  const dataRows = d.students.map((s,i) => {
+    const attColor = s.att==='O'?'1a7a3a': s.att==='X'?'cc0000':'cc6600';
+    return `<w:tr>
+      ${cell(i+1)}
+      ${cell(s.name, true)}
+      ${cell(attMap[s.att]||s.att, false, 'FFFFFF', attColor)}
+      ${cell(yn(s.hw))}
+      ${cell(yn(s.pre))}
+      ${cell(yn(s.rev))}
+      ${cell(starStr(s.star))}
+      ${cell(s.memo||'')}
+      ${cell(s.pnote||'')}
+    </w:tr>`;
+  }).join('');
+
+  // 단락 헬퍼
+  const para = (txt, bold=false, size=20, color='000000', spaceAfter=100) => `
+    <w:p>
+      <w:pPr><w:spacing w:after="${spaceAfter}"/></w:pPr>
+      <w:r><w:rPr>${bold?'<w:b/>':''}<w:color w:val="${color}"/>
+        <w:sz w:val="${size}"/><w:szCs w:val="${size}"/>
+      </w:rPr><w:t xml:space="preserve">${xe(txt)}</w:t></w:r>
+    </w:p>`;
+
+  const xml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"
+  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<w:body>
+  ${para('LIT YOU UP ACADEMY — 학습 체크표', true, 28, '000000', 80)}
+  ${para(`날짜: ${d.date||'-'}   강사: ${d.teacher||'-'}   과목: ${d.subject||'-'}`, false, 18, '444444', 60)}
+  ${para(`수업내용: ${d.content||'-'}`, false, 18, '444444', 200)}
+
+  <w:tbl>
+    <w:tblPr>
+      <w:tblStyle w:val="TableGrid"/>
+      <w:tblW w:w="0" w:type="auto"/>
+      <w:tblBorders>
+        <w:top w:val="single" w:sz="4" w:color="CCCCCC"/>
+        <w:left w:val="single" w:sz="4" w:color="CCCCCC"/>
+        <w:bottom w:val="single" w:sz="4" w:color="CCCCCC"/>
+        <w:right w:val="single" w:sz="4" w:color="CCCCCC"/>
+        <w:insideH w:val="single" w:sz="4" w:color="CCCCCC"/>
+        <w:insideV w:val="single" w:sz="4" w:color="CCCCCC"/>
+      </w:tblBorders>
+    </w:tblPr>
+    ${headerRow}
+    ${dataRows}
+  </w:tbl>
+
+  ${para('', false, 18, '000000', 200)}
+  ${para(`[ 요약 ]  전체 ${total}명  |  출석 ${present}  |  결석 ${absent}  |  지각 ${late}  |  숙제완료 ${hw}  |  예습 ${pre}  |  복습 ${rev}  |  평균태도 ${avgAtt}`, true, 18, '333333', 100)}
+  ${para('LIT YOU UP ACADEMY  —  학습 체크표', false, 16, 'aaaaaa', 0)}
+
+  <w:sectPr>
+    <w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/>
+    <w:pgMar w:top="720" w:right="720" w:bottom="720" w:left="720"/>
+  </w:sectPr>
+</w:body>
+</w:document>`;
+
+  // docx는 zip 구조지만 단순 XML로도 Word가 열 수 있음 (RTF 대안)
+  // 대신 HTML → Word 방식으로 저장 (가장 호환성 높음)
+  const htmlContent = `
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="utf-8">
+<style>
+  body { font-family: Arial, sans-serif; font-size: 11pt; }
+  h1 { font-size: 18pt; margin-bottom: 4px; }
+  h2 { font-size: 11pt; color: #666; font-weight: normal; margin: 2px 0 12px; }
+  .info { font-size: 10pt; color: #444; margin-bottom: 16px; }
+  table { border-collapse: collapse; width: 100%; font-size: 10pt; }
+  th { background: #1a1a1a; color: #fff; padding: 6px 8px; text-align: left; }
+  td { padding: 6px 8px; border: 1px solid #ccc; }
+  tr:nth-child(even) td { background: #f9f9f9; }
+  .att-o { color: #1a7a3a; font-weight: bold; }
+  .att-x { color: #cc0000; font-weight: bold; }
+  .att-l { color: #cc6600; font-weight: bold; }
+  .summary { margin-top: 16px; font-size: 10pt; color: #444; border-top: 2px solid #ccc; padding-top: 10px; }
+  .footer { margin-top: 8px; font-size: 9pt; color: #aaa; }
+</style>
+</head>
+<body>
+<h1>LIT YOU UP ACADEMY — 학습 체크표</h1>
+<div class="info">
+  날짜: <b>${xe(d.date||'-')}</b> &nbsp;|&nbsp;
+  강사: <b>${xe(d.teacher||'-')}</b> &nbsp;|&nbsp;
+  과목: <b>${xe(d.subject||'-')}</b><br>
+  수업내용: ${xe(d.content||'-')}
+</div>
+<table>
+  <tr>
+    <th>#</th><th>이름</th><th>출석</th><th>숙제</th><th>예습</th><th>복습</th><th>태도</th><th>특이사항</th><th>학부모 전달 사항</th>
+  </tr>
+  ${d.students.map((s,i) => `
+  <tr>
+    <td>${i+1}</td>
+    <td><b>${xe(s.name)}</b></td>
+    <td class="att-${(s.att||'o').toLowerCase()}">${xe(attMap[s.att]||s.att)}</td>
+    <td>${yn(s.hw)}</td>
+    <td>${yn(s.pre)}</td>
+    <td>${yn(s.rev)}</td>
+    <td>${xe(starStr(s.star))}</td>
+    <td>${xe(s.memo||'')}</td>
+    <td>${xe(s.pnote||'')}</td>
+  </tr>`).join('')}
+</table>
+<div class="summary">
+  전체 ${total}명 &nbsp;|&nbsp; 출석 ${present} &nbsp;|&nbsp; 결석 ${absent} &nbsp;|&nbsp; 지각 ${late}
+  &nbsp;|&nbsp; 숙제완료 ${hw} &nbsp;|&nbsp; 예습 ${pre} &nbsp;|&nbsp; 복습 ${rev} &nbsp;|&nbsp; 평균태도 ${avgAtt}
+</div>
+<div class="footer">LIT YOU UP ACADEMY</div>
+</body></html>`;
+
+  const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `LYU_${d.date||'nodate'}_${d.subject||'check'}.doc`;
+  a.click();
+  URL.revokeObjectURL(url);
+  setStatus('ok', '✓ Word 저장됨 (.doc)');
+}
+
+/* ──────────────────────────────
+   EXPORT MODAL
+────────────────────────────── */
+let exportMode = 'save';
+
+function openExportModal(mode) {
+  exportMode = mode;
+  const title = document.getElementById('exportTitle');
+  const desc  = document.getElementById('exportDesc');
+  const btns  = document.getElementById('exportBtns');
+
+  if (mode === 'save') {
+    title.textContent = '📥 문서 저장';
+    desc.textContent  = '전체 체크표를 원하는 형식으로 저장하세요.';
+    btns.innerHTML = `
+      <button class="exp-btn" onclick="saveAsJPG()">🖼 JPG 이미지로 저장</button>
+      <button class="exp-btn" onclick="saveAsPDF()">📄 PDF로 저장</button>
+      <button class="exp-btn" onclick="exportWord()">📝 Word (.docx)로 저장</button>
+      <button class="exp-btn" onclick="exportExcel()">📊 Excel (.xlsx)로 저장</button>`;
+  } else {
+    title.textContent = '✉ Gmail 발송';
+    desc.textContent  = '학생별 개별 발송 — 학부모 전달 사항이 입력된 학생에게 발송됩니다.';
+    btns.innerHTML = buildStudentMailBtns();
+  }
+  document.getElementById('exportModal').classList.add('open');
+}
+
+function buildStudentMailBtns() {
+  if (!students.length) return '<p style="color:var(--muted);text-align:center;padding:16px;">학생을 먼저 추가해 주세요</p>';
+  return students.map(s => {
+    const hasPnote = !!document.getElementById('pnote'+s.id)?.value?.trim();
+    return `
+      <div class="mail-stu-row">
+        <span class="mail-stu-name">${x(s.name)}</span>
+        <div style="display:flex;gap:6px;">
+          <button class="exp-btn-sm exp-jpg" onclick="mailStudentJPG(${s.id},'${x(s.name)}')">JPG</button>
+          <button class="exp-btn-sm exp-pdf" onclick="mailStudentPDF(${s.id},'${x(s.name)}')">PDF</button>
+          <button class="exp-btn-sm exp-txt ${hasPnote?'':'exp-dim'}" onclick="mailStudentText(${s.id},'${x(s.name)}')">텍스트</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function closeExportModal() {
+  document.getElementById('exportModal').classList.remove('open');
+}
+
+/* ──────────────────────────────
+   JPG / PDF 저장 (전체)
+────────────────────────────── */
+async function captureGrid() {
+  const toolbar = document.querySelector('.toolbar');
+  const addZone = document.querySelector('.add-zone');
+  toolbar.style.display = 'none';
+  addZone.style.display = 'none';
+  closeExportModal();
+
+  const target = document.querySelector('.wrap');
+
+  // 원래 스타일 저장
+  const origHeight   = target.style.height;
+  const origOverflow = target.style.overflow;
+
+  // 전체 높이로 펼치기
+  target.style.height   = 'auto';
+  target.style.overflow = 'visible';
+
+  const fullH = target.scrollHeight;
+  const fullW = target.scrollWidth;
+
+  const canvas = await html2canvas(target, {
+    backgroundColor: '#0d0d0d',
+    scale: 1.5,
+    width:  fullW,
+    height: fullH,
+    scrollX: 0,
+    scrollY: 0,
+    windowWidth:  fullW,
+    windowHeight: fullH,
+    useCORS: true,
+    logging: false
+  });
+
+  // 스타일 복원
+  target.style.height   = origHeight;
+  target.style.overflow = origOverflow;
+
+  toolbar.style.display = '';
+  addZone.style.display = '';
+  return canvas;
+}
+
+async function saveAsJPG() {
+  setStatus('saving', '🖼 JPG 생성 중…');
+  const d = collectData();
+  const canvas = await captureGrid();
+  const a = document.createElement('a');
+  a.download = `LYU_${d.date||'nodate'}_${d.subject||'check'}.jpg`;
+  a.href = canvas.toDataURL('image/jpeg', 0.95);
+  a.click();
+  setStatus('ok', '✓ JPG 저장됨');
+}
+
+function saveAsPDF() {
+  // 브라우저 인쇄 → PDF 저장 (가장 정확한 방식)
+  closeExportModal();
+  setTimeout(() => window.print(), 200);
+}
+
+/* ──────────────────────────────
+   학생 카드 캡처 (개별)
+────────────────────────────── */
+async function captureStudentCard(id) {
+  const card = document.getElementById('card-'+id);
+  if (!card) return null;
+
+  const delBtn = card.querySelector('.c-del');
+  const pgmail = card.querySelector('.btn-pgmail');
+  const ptags  = card.querySelector('.p-tags');
+  if (delBtn) delBtn.style.display = 'none';
+  if (pgmail) pgmail.style.display = 'none';
+  if (ptags)  ptags.style.display  = 'none';
+
+  const rect = card.getBoundingClientRect();
+  const canvas = await html2canvas(card, {
+    backgroundColor: '#1c1c1c',
+    scale: 1,
+    width:  rect.width,
+    height: rect.height,
+    scrollX: 0,
+    scrollY: -window.scrollY,
+    useCORS: true,
+    logging: false
+  });
+
+  if (delBtn) delBtn.style.display = '';
+  if (pgmail) pgmail.style.display = '';
+  if (ptags)  ptags.style.display  = '';
+  return canvas;
+}
+
+/* 학생 카드 → JPG → Gmail */
+async function mailStudentJPG(id, name) {
+  setStatus('saving', `📧 ${name} JPG 준비 중…`);
+  closeExportModal();
+  const d = collectData();
+  const canvas = await captureStudentCard(id);
+  if (!canvas) return;
+
+  // JPG 다운로드
+  const a = document.createElement('a');
+  a.download = `LYU_${name}_${d.date||'nodate'}.jpg`;
+  a.href = canvas.toDataURL('image/jpeg', 0.95);
+  a.click();
+
+  // Gmail 열기 (첨부는 수동, 본문에 안내)
+  const subject = `[LIT YOU UP] ${name} 학생 수업 리포트 (${d.date||''})`;
+  const body = `안녕하세요, LIT YOU UP ACADEMY입니다.\n\n${name} 학생의 ${d.date||''} 수업 리포트를 첨부 파일로 보내드립니다.\n\n※ 방금 다운로드된 JPG 파일을 첨부해서 발송해 주세요.\n\n과목: ${d.subject||'-'}  |  강사: ${d.teacher||'-'}\n\n감사합니다.\nLIT YOU UP ACADEMY`;
+  setTimeout(() => {
+    window.open('https://mail.google.com/mail/?view=cm&fs=1&su='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body), '_blank');
+    setStatus('ok', '✓ Gmail 열림 — JPG 첨부 후 발송하세요');
+  }, 800);
+}
+
+/* 학생 카드 → PDF → Gmail */
+async function mailStudentPDF(id, name) {
+  closeExportModal();
+  const d = collectData();
+
+  // 해당 카드만 인쇄되도록 print 스타일 임시 적용
+  const allCards = document.querySelectorAll('.s-card');
+  allCards.forEach(c => {
+    if (c.id !== 'card-'+id) c.style.display = 'none';
+  });
+  const toolbar  = document.querySelector('.toolbar');
+  const addZone  = document.querySelector('.add-zone');
+  const summary  = document.querySelector('.summary-block');
+  const info     = document.querySelector('.info-block');
+  toolbar.style.display = 'none';
+  addZone.style.display = 'none';
+
+  window.print();
+
+  // 복원
+  allCards.forEach(c => c.style.display = '');
+  toolbar.style.display  = '';
+  addZone.style.display  = '';
+
+  // Gmail 열기
+  const subject = `[LIT YOU UP] ${name} 학생 수업 리포트 (${d.date||''})`;
+  const body = `안녕하세요, LIT YOU UP ACADEMY입니다.\n\n${name} 학생의 ${d.date||''} 수업 리포트를 첨부 파일로 보내드립니다.\n\n※ 방금 저장된 PDF 파일을 첨부해서 발송해 주세요.\n\n과목: ${d.subject||'-'}  |  강사: ${d.teacher||'-'}\n\n감사합니다.\nLIT YOU UP ACADEMY`;
+  setTimeout(() => {
+    window.open('https://mail.google.com/mail/?view=cm&fs=1&su='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body), '_blank');
+    setStatus('ok', '✓ Gmail 열림 — PDF 첨부 후 발송하세요');
+  }, 500);
+}
+
+/* 학생 카드 → 텍스트 본문 Gmail */
+function mailStudentText(id, name) {
+  closeExportModal();
+  const d = collectData();
+  const si = students.findIndex(s => s.id === id);
+  const s  = si >= 0 ? d.students[si] : null;
+  const pnote = document.getElementById('pnote'+id)?.value || '';
+  const attMap = { O:'출석', X:'결석', L:'지각' };
+  const yn = v => v ? '✓' : '-';
+  const starStr = n => n ? '★'.repeat(n)+'☆'.repeat(5-n) : '-';
+
+  const subject = `[LIT YOU UP] ${name} 학생 수업 리포트 (${d.date||''})`;
+  let body = `안녕하세요, LIT YOU UP ACADEMY입니다.\n\n`;
+  body += `${name} 학생의 ${d.date||''} 수업 내용을 전달드립니다.\n`;
+  body += `${'─'.repeat(38)}\n`;
+  if (s) {
+    body += `출석: ${attMap[s.att]||s.att}  |  숙제: ${yn(s.hw)}  |  예습: ${yn(s.pre)}  |  복습: ${yn(s.rev)}  |  태도: ${starStr(s.star)}\n`;
+    if (s.memo) body += `특이사항: ${s.memo}\n`;
+  }
+  if (pnote) { body += `\n[ 학부모 전달 사항 ]\n${pnote}\n`; }
+  body += `${'─'.repeat(38)}\n`;
+  body += `과목: ${d.subject||'-'}  |  강사: ${d.teacher||'-'}\n\n감사합니다.\nLIT YOU UP ACADEMY`;
+
+  window.open('https://mail.google.com/mail/?view=cm&fs=1&su='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body), '_blank');
+  setStatus('ok', '✓ Gmail 열림');
+}
+
+/* ──────────────────────────────
+   학부모 전달 사항
+────────────────────────────── */
+function addTag(id, tag) {
+  const ta = document.getElementById('pnote'+id);
+  if (!ta) return;
+  ta.value = ta.value ? ta.value + '\n' + tag : tag;
+  ta.focus();
+}
+
+/* ──────────────────────────────
+   UTILS
+────────────────────────────── */
+function x(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
